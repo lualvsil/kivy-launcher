@@ -33,7 +33,7 @@ jobs:
 
       # Construir com Buildozer
       - name: Build with Buildozer
-        run: 
+        run: |
           pip3 install --user --upgrade buildozer Cython virtualenv
           export PATH=$PATH:~/.local/bin/
           export APP_ANDROID_ACCEPT_SDK_LICENSE=1 
