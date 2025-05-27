@@ -4,32 +4,34 @@ on:
       tags:
         description: 'Test scenario tags'
         required: false
-        type: booleanº
+        type: boolean
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
-      # used to cache dependencies with a timeout
+      # Obter a data atual
       - name: Get Date
         id: get-date
-        run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-        shell: bash
+        run: echo "date=$(date -u +'%Y%m%d')" >> $GITHUB_ENV
 
+      # Cache do diretório global do Buildozer
       - name: Cache Buildozer global directory
         uses: actions/cache@v3
         with:
           path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
 
-      - uses: actions/cache@v3
+      # Cache do diretório de build do Buildozer
+      - name: Cache Buildozer build directory
+        uses: actions/cache@v3
         with:
           path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
+          key: ${{ runner.os }}-${{ env.date }}-${{ hashFiles('buildozer.spec') }}
 
+      # Construir com Buildozer
       - name: Build with Buildozer
         run: |
           pip3 install --user --upgrade buildozer Cython virtualenv
@@ -38,11 +40,11 @@ jobs:
           export BUILDOZER_WARN_ON_ROOT=0
           sudo apt update 
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev 
-          cd ${{ github.workspace }}
           buildozer android debug
 
+      # Fazer upload dos artefatos
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: package
-          path: bin/*.apk
+          path: bin/*.apknpne
