@@ -1,21 +1,10 @@
 on:
-<<<<<<< HEAD
-
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  schedule:
-    # every 1st day of the month at 10:30
-    - cron: '30 10 1 * *'
-=======
   workflow_dispatch:
     inputs:
       tags:
         description: 'Test scenario tags'
         required: false
         type: boolean
->>>>>>> 7691b2e5fa25541a008f545997ece4727ea3e252
 
 jobs:
   build:
